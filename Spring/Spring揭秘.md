@@ -42,3 +42,8 @@
 	- Around Advice——在Joinpoint之前和之后执行横切逻辑
 - **Introduction**——不是根据横切逻辑在Joinpoint的执行时机区分的，而是根据它可以完成的功能而区分其他Advice类型
 	- 可以为原有的对象增加新的特性或行为
+
+### Chapter 8 Spring AOP概述及其实现机制
+如果Spring AOP发现目标对象实现了相应接口（	```InvocationHandler```）,采用Java动态代理机制为其生成代理对象实例
+如果目标对象没有实现相应接口，Spring AOP使用**CGLib**的开源字的动态节码生成库生成代理对象实例
+### Chapter 9 Spring AOP一世
