@@ -39,4 +39,6 @@
 		- After (Finally) Advice
 
 			![各种Advice的执行时机](./images/1529226287226.png)
-	- Around Advice 
+	- Around Advice——在Joinpoint之前和之后执行横切逻辑
+- **Introduction**——不是根据横切逻辑在Joinpoint的执行时机区分的，而是根据它可以完成的功能而区分其他Advice类型
+	- 可以为原有的对象增加新的特性或行为
