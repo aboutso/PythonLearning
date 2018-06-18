@@ -47,3 +47,39 @@
 如果Spring AOP发现目标对象实现了相应接口（	```InvocationHandler```）,采用Java动态代理机制为其生成代理对象实例
 如果目标对象没有实现相应接口，Spring AOP使用**CGLib**的开源字的动态节码生成库生成代理对象实例
 ### Chapter 9 Spring AOP一世
+
+### Chapter 10 Spring AOP二世
+
+ 1. Spring AOP只是使用AspectJ类库进行Pointcut的解析和配置，最终实现机制还是Spring AOP代理模式
+ 2. 使用的Jar包
+	 - aspectjweaver.jar
+	 - aspectjrt.jar
+#### **使用到的注解**
+ 3. ```@Aspect```
+ 4. ```@Pointcut```,包含
+	 - Pointcut Expression——规定Pointcut匹配规则
+	 - Pointcut Signature——具体化为方法定义，唯一的限制是*返回类型必须是void*
+		 - 可以将Pointcut Signature作为Pointcut Expression的标志符，在Pointcut Expression的定义中取代重复的Pointcut表达式定义
+	- Spring AOP可以使用的Pointcut表达式
+		- execution-指定要匹配的方法
+		- within-声明类型，匹配指定类型下的所有JoinPoint(方法)
+		- this和target
+			- this——目标对象的代理对象
+			- target——目标对象
+		- args——帮助捕捉拥有指定参数类型、参数数量的方法级JoinPoint
+		- @within——效果和within一样，不过@within的参数是注解——即所有被注解的类中的方法都是JoinPoint
+		- @target
+		- @args
+		- @annotation
+ 5. @AspectJ形式声明的Pointcut表达式，在Spring AOP内部解析会转换为专门面向AspectJ的Pointcut实现-**AspectJExpressionPointcut**
+ 6. @AspectJ形式的Advice
+	 - @Before
+		 - 如何访问在Advice定义中访问Joinpoint的参数
+	- @AfterReturning
+	- @AfterThrowing
+	- @After(finally)
+	- @Around
+		- 第一个参数必须是org.aspectj.lang.ProceedingJoinpoint类型。通常情况下，需要在Advice中调用ProceedingJoinpoint的proceed()方法继续调用链的执行
+	- @DeclareParents-对应Introduction
+		![@DeclareParents 示例](./images/1529327108158.png)
+		说明：将ICounter接口（实现类CounterImpl）的行为逻辑加到ITask的实现类MockTask上
