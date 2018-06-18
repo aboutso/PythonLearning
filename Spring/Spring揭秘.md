@@ -83,3 +83,8 @@
 	- @DeclareParents-对应Introduction
 		![@DeclareParents 示例](./images/1529327108158.png)
 		说明：将ICounter接口（实现类CounterImpl）的行为逻辑加到ITask的实现类MockTask上
+### Chapter 11 AOP案例
+ 1. 异常处理
+ 2. 安全检查——Spring Security
+ 3. 缓存
+	 - apache common-collections框架的LRU 
