@@ -20,3 +20,21 @@
 - 全局事务——多RM参与
 - 局部事务——只有一个RM
 ### Chapter 18 Java的事务管理
+1.Java平台的局部事务支持
+
+	通过当前使用的数据访问技术所提供的基于**connection**的API管理事务
+- 消息服务资源——通过JMS的javax.jms.session控制整个事务
+
+2.Java平台的分布式事务
+- JTA（**Java Transaction API**）
+	- JTA是Sun提出的标准化分布式事务访问的接口规范。
+	- 具体实现由供应商提供
+- JCA（**Java Connector Architecture**）——面向EIS（Enterprise Information System）的集成，通过为遗留EIS系统和Java EE应用服务器制定统一的通信标准，二者可以实现服务上的互通
+### Chapter 19 Spring事务架构
+1.**基本原则**：事务管理的关注点和数据访问关注点**相分离**
+2.**DataSourceUtils**对connection的管理：```org.springframework.jdbc.datasource.DataSourceUtils```从```org.springframework.transaction.support.TransactionSynchronizationManager```获取connection资源。如果当前线程之前没有绑定connection资源，通过数据访问对象的datasource获取新的connection，否则使用绑定的connection
+3.基础结构
+![事务抽象接口关系图](./images/1530031694886.png)
+- TransactionDefinition
+- TransactionStatus
+- PlatformTransactionManager
