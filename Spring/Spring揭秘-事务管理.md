@@ -36,5 +36,36 @@
 3.基础结构
 ![事务抽象接口关系图](./images/1530031694886.png)
 - TransactionDefinition
+	- 事务的隔离级别
+	- 事务的传播行为——表示整个事务处理过程所跨越的业务对象，将以什么样的行为参与事务
+		- PROPAGATION_REQUIRED(default)
+		- PROPAGATION_SUPPORTS
+		- PROPAGATION_MANDATORY
+		- PROPAGATION_REQUIRES_NEW
+		- PROPAGATION_NOT_SUPPORTED
+		- PROPAGATION_NEVER
+		- PROPAGATION_NESTED
+	- 事务的超时时间
+	- 是否为**只读**事务——仅仅是给ResourceManager一种优化提示，但是否优化由ResourceManager决定
+	- 实现：**编程式事务场景**、**声明式事务场景**
 - TransactionStatus
+	- 查询事务状态
+	- 通过setRollbackOnly()方法标记当前事务以使其回滚
+	- 如果相应的PlatformTransactionManager支持SavePoint，可以通过TransactionStatus在当前事务中创建内部嵌套事务
 - PlatformTransactionManager
+	- 功能：界定事务边界。PlatformTransactionManager使用TransactionDefinition开启相关事务，事务从开启到结束之间的状态由TransactionStatus负责，可以通过TransactionStatus对事物进行有限的控制
+
+4.PlatformTransactionManager
+- 整个抽象体系基于**Strategy模式**：由PlatformTransactionManager对事务界定统一抽象，具体的界定策略实现交给具体的实现类
+
+4.1、局部事务下PlatformTransactionManager实现类
+| 数据访问技术| PlatformTransactionManager实现类|
+| --------- | ---------------------------- |
+| JDBC      | DataSourceTransactionManager |
+| Hibernate | HibernateTransactionManager  |
+| JDO       | JdoTransactionManager        |
+| JPA       | JpaTransactionManager        |
+| TopLink   | TransactionManager           |
+| *JMS*       | JmsTransactionManager        |
+4.2、全局事务下PlatformTransactionManager实现类
+```org.springframework.transaction.jta.JtaTransactionManager```
