@@ -92,4 +92,6 @@
 2.**Strategy模式**——封装一系列可以互相替换的算法逻辑，使得算法的演化独立于使用它们的客户端代码
 - 只要能够有效剥离客户端代码与特定关系点之间的依赖关系，就可以考虑Strategy模式
 - Spring框架在Strategy模式的使用：
-	-  
+	- 事务抽象：将使用不同API管理事务的界定行为统一抽象，客户端透明的使用PlatformTransactionManager策略接口进行事务界定
+	- IOC容器根据bean定义实例化bean对象时，根据情况决定使用反射还是CGLib。```InstantiationStrategy```是策略抽象接口，对应```SimpleInstantiationStrategy```和```CglibSubclassingInstantiationStrategy```实现类
+	- Validation框架
