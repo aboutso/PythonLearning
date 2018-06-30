@@ -59,6 +59,7 @@
 - 整个抽象体系基于**Strategy模式**：由PlatformTransactionManager对事务界定统一抽象，具体的界定策略实现交给具体的实现类
 
 4.1、局部事务下PlatformTransactionManager实现类
+
 | 数据访问技术| PlatformTransactionManager实现类|
 | --------- | ---------------------------- |
 | JDBC      | DataSourceTransactionManager |
