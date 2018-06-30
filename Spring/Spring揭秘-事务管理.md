@@ -69,3 +69,10 @@
 | *JMS*       | JmsTransactionManager        |
 4.2、全局事务下PlatformTransactionManager实现类
 ```org.springframework.transaction.jta.JtaTransactionManager```
+
+### Chapter 20 Spring事务管理
+1.编程式事务管理
+- 使用**PlatformTransactionManager**
+- 使用**TransactionTemplate**
+	-  
+2.声明式事务管理
