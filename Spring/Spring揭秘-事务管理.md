@@ -74,5 +74,22 @@
 1.编程式事务管理
 - 使用**PlatformTransactionManager**
 - 使用**TransactionTemplate**
+	- Spring对PlatformTransactionManager使用模板方法和Callback相结合的方式封装，即TransactionTemplate
+	- TransactionCallback接口、TransactionCallbackWithoutResult接口
+- 基于**Savepoint**的嵌套事务——将TransactionStatus作为SavepointManager
+
+2.声明式事务管理（*Spring AOP的使用*）
+- @Transactional
+- 
+```xml
+<tx:annotation-driven transaction-manager="transactionManager"/>
+```
+### Chapter 21 Spring事务管理之扩展
+#### 1.ThreadLocal
+- 目的：通过避免对象的共享来保证应用程序中的线程安全
+- 每个Thread类由类型为ThreadLocal.ThreadLocalMap名为threadLocals的实例变量
+
+2.**Strategy模式**——封装一系列可以互相替换的算法逻辑，使得算法的演化独立于使用它们的客户端代码
+- 只要能够有效剥离客户端代码与特定关系点之间的依赖关系，就可以考虑Strategy模式
+- Spring框架在Strategy模式的使用：
 	-  
-2.声明式事务管理
