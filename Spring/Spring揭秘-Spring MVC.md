@@ -84,3 +84,13 @@
 - 二进制文档格式
 	- AbstractExcelView——使用Apache POI构建Excel
 	- AbstractJExcelView——使用JExcel API
+	- AbstractPdfView——使用OpenPDF
+- JasperReports的View实现
+	- JasperReportsCsvView
+	- JasperReportsHtmlView
+	- JasperReportsPdfView
+	- JasperReportsXlsView
+- AbstractXlsView
+- RedirectView——对指定的Url重定向
+	![RedirectView工作原理](./images/1530420163332.png)
+	- 简便方法：在逻辑视图名中使用redirect/forward前缀
