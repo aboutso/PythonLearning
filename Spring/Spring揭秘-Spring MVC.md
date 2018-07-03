@@ -104,3 +104,10 @@
 	<input TYPE="Submit" VALUE="Upload"/>
 </form>
 ```
+- Spring提供抽象接口```org.springframework.web.multipart.MultipartResolver```
+	- MultipartResolverde的**resolveMultipart**方法返回**MultipartHttpServletRequest**供后续处理流程使用
+	- 两个实现类：**CommonsMultipartResolver** for Apache Commons FileUpload
+	- 两个实现类：**StandardServletMultipartResolver** for the Servlet 3.0+ Part API
+- 文件上传,Spring MVC提供两个**PropertyEditor**实现类：
+	- ```org.springframework.web.multipart.support.ByteArrayMultipartFileEditor```
+	- ```org.springframework.web.multipart.support.StringMultipartFileEditor```
