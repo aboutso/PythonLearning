@@ -94,3 +94,13 @@
 - RedirectView——对指定的Url重定向
 	![RedirectView工作原理](./images/1530420163332.png)
 	- 简便方法：在逻辑视图名中使用redirect/forward前缀
+### Chapter 25
+![逻辑结构](./images/1530631168246.png)
+1.MultipartResolver与文件上传
+- 前端代码
+```html
+<form action="" method="POST" enctype="multipart/form-data">
+	<input NAME="FileName" type="file"/>
+	<input TYPE="Submit" VALUE="Upload"/>
+</form>
+```
