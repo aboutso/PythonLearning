@@ -110,4 +110,29 @@
 	- 两个实现类：**StandardServletMultipartResolver** for the Servlet 3.0+ Part API
 - 文件上传,Spring MVC提供两个**PropertyEditor**实现类：
 	- ```org.springframework.web.multipart.support.ByteArrayMultipartFileEditor```
-	- ```org.springframework.web.multipart.support.StringMultipartFileEditor```Ce
+	- ```org.springframework.web.multipart.support.StringMultipartFileEditor```
+
+2.Handler与HandlerAdapter
+- Spring MVC中把任何可以处理Web请求的对象统称为**Handler**。Controller只是Handler的一种特殊类型
+- HandlerExecutionChain中所返回的用于处理Web请求的对象,不只是Controller
+- DispatcherServlet将不同Handler的调用职责转交给**HandlerAdapter**
+
+3.HandlerInterceptor
+- HandlerExecutionChainf返回一组HandlerInterceptor,可以在Handler执行前后对处理流程进行拦截操作
+
+3.1.可用实现
+- UserRoleAuthorizationInterceptor
+	- Interceptor that checks the authorization of the current user via the user's roles, as evaluated by *HttpServletRequest's isUserInRole* method
+- WebContentInterceptor
+	- 检查请求方法是否在支持方法之列
+	- 检查必要的Session实例
+	- 检查缓存时间并通过设置相应Http Header的方式控制缓存行为
+
+3.2 HandlerInterceptor之外的选择
+- Servlet Filter
+![HandlerInterceptor与ServletFilter](./images/20180705.png)
+	- Filter在servlet层面对DispatcherServlet进行拦截
+	- HandlerInterceptor在DispatcherServlet内部对Handler进行拦截
+- Filter作为Servlet标准组件，在web.xml中配置,因而其生命周期由Web容器管理
+- 为了能够使用Spring IoC功能，Spring MVC引入```org.springframework.web.filter.DelegatingFilterProxy```
+![HandlerInterceptor与ServletFilter](./images/2018070501.png)
