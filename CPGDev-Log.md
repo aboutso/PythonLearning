@@ -19,9 +19,75 @@
     RecipeResourceSet::getRecipeResourceSet(controlRecipe)
     recipeResources=recipeResourceSet.getRecipeResources()
     ```
+- ```com.rockwell.om.app.utility.RecipeSequence```
+    - Code
+    ```Java
+    //Create
+    RecipeSequence::createRecipeSequence(com.datasweep.compatibility.client.ProcessStepControlRecipe pscr, com.datasweep.compatibility.client.MeasuredValue plannedQuantity)
+
+    RecipeSequence::getProcessSteps(com.datasweep.compatibility.client.ProcessStepControlRecipe pscr, int sequenceNumber)
+
+    RecipeSequence::getRecipeSequence(com.datasweep.compatibility.client.ProcessStepControlRecipe pscr, int sequenceNumber)
+
+    RecipeSequence::getRecipeSequence(com.datasweep.compatibility.client.ProcessStepControlRecipe pscr, int sequenceNumber, java.lang.String relationshipName, java.lang.String expectedStateName)
+    ```
 ### 4.FormCntrl23Activity中使用Form，Form中的Edit需要设置**alternativeEditorSupportClass**
 - smartEdit
 - MeasuredValue ```com.datasweep.plantops.property.editor.MeasuredValuePropertyEditor```
 - String
     - ```com.rockwell.om.control.ReadOnlyStringPropertyEditor```
     - ```com.datasweep.plantops.property.editor.StringPropertyEditor```
+### 5.获取**ProcessStepControlRecipe**
+```Java
+// 0 ControlRecipe
+// 1 ProcessStepControlRecipe
+processStepControlRecipe = processOrderItem.getRuntimeRecipe(1)
+```
+### 6.获取**processStep**的消耗/产出物料
+```
+mis = processStep.getProcessStepMaterialInfos()
+```
+### 7.根据工作中心获取该工作中心的工序、消耗产出物料（该代码为失败代码）
+```java
+function calculatePartRequest(){
+    itemProcessOrder=getFormProperty("processOrderItem")
+    if(itemProcessOrder==null){
+        processOrder=getProcessOrderByName("20180703002")
+        itemProcessOrder=processOrder.getProcessOrderItems()[0]
+    }
+    
+    orderName=itemProcessOrder.getOrderName()
+    controlRecipe = itemProcessOrder.getRuntimeRecipe(1)
+        
+    runtimeMFCs=controlRecipe.getRuntimeMFCs()
+    foreach runtimeMFC(runtimeMFCs){
+        if(runtimeMFC.getType()==1){
+        materialName = runtimeMFC.getPartNumber()
+        materialDesc = runtimeMFC.getPartDescription()
+        mvPlanQty = runtimeMFC.getQuantity()
+        println(materialName+"\t"+materialDesc+"\t"+mvPlanQty+"\t"+runtimeMFC.getType())
+        }
+    }
+     
+    processSteps = controlRecipe.getProcessSteps()
+//     foreach processStep(processSteps){
+//         //println(processStep.getRouteStep().getName())
+//         
+//         if(processStep.getRouteStep().getWorkCenters().contains(workCenter40)||
+//         processStep.getRouteStep().getWorkCenters().contains(workCenter50)){
+//             println(processStep.getRouteStep().getName())
+//         }
+//     }
+    
+    
+    recipeResourceSet=RecipeResourceSet::getRecipeResourceSet(controlRecipe)
+    recipeResources=recipeResourceSet.getRecipeResources()
+    foreach  recipeResource(recipeResources){
+        if(recipeResource.getWorkCenter().getName()==workcenter01 ||
+        recipeResource.getWorkCenter().getName()==workcenter02){
+            println(recipeResource.getResourceObjectDescription())
+        }
+    }
+    
+}
+```

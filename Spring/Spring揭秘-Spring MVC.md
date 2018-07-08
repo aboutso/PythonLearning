@@ -136,3 +136,32 @@
 - Filter作为Servlet标准组件，在web.xml中配置,因而其生命周期由Web容器管理
 - 为了能够使用Spring IoC功能，Spring MVC引入```org.springframework.web.filter.DelegatingFilterProxy```
 ![HandlerInterceptor与ServletFilter](./images/2018070501.png)
+
+4.框架内异常处理与HandlerExceptionResolver
+- **HandlerExceptionResolver**对异常的处理仅限于Handler查找和Handler执行期间
+- 实现类```org.springframework.web.servlet.handler.SimpleMappingExceptionResolver```
+	- 使用**Properties**管理具体异常类型与所要转向的错误页面之间的映射关系
+	- SimpleMappingExceptionResolver根据类名而不是类型,使用String.IndexOf方法进行匹配
+	- *此处有坑*
+
+5.国际化视图与LocalResolver
+- ViewResolverg根据逻辑视图名解析视图时,方法**resolveViewName(viewName,locale)***，根据不同Locale返回不同视图。
+	- 此处locale参数的获取
+- ```LocalResolver```接口对各种可能的Locale获取/解析方式进行统一的策略抽象
+- 实现类```FixedLocalResolver```
+- 实现类```AcceptHeaderLocaleResolver```——根据Http Header的**Accept-Language**
+- 实现类```SessionLocalResolver```
+- 实现类```CookieLocalResolver```
+
+5.1 DispatcherServlet在初始化的时候获取LocalResolver实例,进而获取解析后的Locale值,以**LocaleContext**形式绑定到当前线程
+
+5.2 **LocaleChangeInterceptor**
+
+6.Theme
+### Chapter 26 基于注解的Controller
+6.1 本书中举例是**DefaultAnnotationHandlerMapping**，Spring 3之后使用```RequestMappingHandlerMapping```及```RequestMappingHandlerAdapter```
+
+### Chapter 27 Spring MVC的*Convention Over Configuration*
+1.Web请求与视图之间的约定
+
+```RequestToViewNameTranslator```-Strategy interface for translating an incoming HttpServletRequest into a logical view name when no view name is explicitly supplied.
