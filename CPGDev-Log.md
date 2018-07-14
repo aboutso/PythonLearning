@@ -31,12 +31,12 @@
 
     RecipeSequence::getRecipeSequence(com.datasweep.compatibility.client.ProcessStepControlRecipe pscr, int sequenceNumber, java.lang.String relationshipName, java.lang.String expectedStateName)
     ```
-### 4.FormCntrl23Activity中使用Form，Form中的Edit需要设置**alternativeEditorSupportClass**
-- smartEdit
+### 4.FormCntrl23Activity中使用Form，Form中的smartEdit需要设置**alternativeEditorSupportClass**
 - MeasuredValue ```com.datasweep.plantops.property.editor.MeasuredValuePropertyEditor```
 - String
     - ```com.rockwell.om.control.ReadOnlyStringPropertyEditor```
     - ```com.datasweep.plantops.property.editor.StringPropertyEditor```
+- Time
 ### 5.获取**ProcessStepControlRecipe**
 ```Java
 // 0 ControlRecipe
