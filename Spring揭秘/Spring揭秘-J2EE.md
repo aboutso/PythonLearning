@@ -12,6 +12,7 @@
 
 4 ```org.springframework.jndi.JndiObjectFactoryBean```
 - FactoryBean that looks up a JNDI object. Exposes the object found in JNDI for bean references, e.g. for data access object's "dataSource" property in case of a DataSource.
+
 ### Chapter 29 Spring与JMS
 1 JMS组成
 - JMS Client
@@ -67,6 +68,11 @@ MessageListener的Variant：**SessionAwareMessageListener**——offering not on
 >Message listener adapter that delegates the handling of messages to target listener methods via reflection, with flexible message type conversion. Allows listener methods to operate on message content types, completely independent from the JMS API.
 
 >By default, the content of incoming JMS messages gets extracted before being passed into the target listener method, to let the target method operate on message content types such as String or byte array instead of the raw Message. Message type conversion is delegated to a Spring JMS MessageConverter. By default, a SimpleMessageConverter will be used. (If you do not want such automatic message conversion taking place, then be sure to set the MessageConverter to null.)
+
+7 JMS异常处理
+JMS的JMSException异常体系以**checked exception**为基准，这就要求要么处理异常要么抛出异常。
+
+Spring以JMSException层次结构为基础，但是以**unchecked exception**为基准，定义了Spring自己的JmsException结构
 
 
 
