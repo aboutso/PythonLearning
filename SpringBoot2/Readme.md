@@ -22,6 +22,10 @@
     - http://blog.csdn.net/column/details/15397.html
 - Spring-boot集成
     - http://lihao312.iteye.com/
+- 2018年9月3日添加
+    - SegmentFault 技术周刊 Vol.36 - 一篇入门 Spring Boot(https://segmentfault.com/a/1190000011832129)
+    - 嘟嘟独立博客 http://tengj.top/tags/Spring-Boot/
+    - 
 ## **推荐网站**
 - Spring boot 官网
     - http://projects.spring.io/spring-boot/
