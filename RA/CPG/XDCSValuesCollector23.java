@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.JOptionPane;
 
-public final class DCSValuesCollector23 extends ActivityControl
+public final class XDCSValuesCollector23 extends ActivityControl
   implements ICPG_Constants, ICPG_ExecutionConstants, ICPG_ManualMessages, IConfigurationConstants, IRuntimeActivityConstants
 {
   public static final String PROCESS_STEP = "processStep";
@@ -108,6 +108,8 @@ public final class DCSValuesCollector23 extends ActivityControl
   private String liveData_url;
   private String liveData_path;
   private String liveData_plc;
+  //LiveData Adaptor
+  //主要使用其 getTGValue方法，从PLC Tag获取点位值
   private LDAdaptor lDAdaptor;
   private transient DataCollectorConfig config = null;
   private transient RuntimeDCS dcs;
@@ -118,7 +120,7 @@ public final class DCSValuesCollector23 extends ActivityControl
   private boolean isCollectClick = false;
   private boolean isCancelClick = false;
 
-  public DCSValuesCollector23()
+  public XDCSValuesCollector23()
   {
     setDefaultConfigValue();
     setMessages(UIUtilities.getMessagesHolder(this, "CPG_Messages"));
@@ -131,6 +133,11 @@ public final class DCSValuesCollector23 extends ActivityControl
     return super.activityStart();
   }
 
+  /**
+   * 获取 MasterRecipe/TemplateRecipe
+   * @param paramProcessStep 工序
+   * @return
+   */
   private Keyed getRecipe(ProcessStep paramProcessStep)
   {
     if (paramProcessStep.getProcessStepControlRecipe().getMasterRecipe() != null)
@@ -138,13 +145,22 @@ public final class DCSValuesCollector23 extends ActivityControl
     return paramProcessStep.getProcessStepControlRecipe().getTemplateRecipe();
   }
 
+  /**
+   * 获取工单
+   * @return ProcessOrder对象
+   */
   private Keyed getOrder(ProcessStep paramProcessStep)
   {
     return paramProcessStep.getProcessStepControlRecipe().getProcessOrderItem().getParent();
   }
 
+  /**
+   * 界面显示 工单,产出物料,工单计划量
+   * @param paramPanel
+   */
   private void buildBind(Panel paramPanel)
   {
+    //region 工单 SmartEdit
     this.orderValueLb1 = new SmartEdit();
     this.orderValueLb1.setName("orderValueLb");
     this.orderValueLb1.setActivityName("orderValueLb");
@@ -165,6 +181,9 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.orderValueLb1.setMessages(UIUtilities.getMessagesHolder(this.orderValueLb1, "CPG_Messages"));
     this.orderValueLb1.setLabelTextId(UIUtilities.getMessageIdHolder(this.orderValueLb1, "MANUAL_PRODUCE_ORDER_LABEL"));
     this.orderValueLb1.setEditorSupportClass(ReadOnlyStringPropertyEditor.class.getName());
+    //endregion
+
+    //region 产出物料 SmartEdit
     this.materialValueLb1 = new SmartEdit();
     this.materialValueLb1.setName("materialValueLb");
     this.materialValueLb1.setActivityName("materialValueLb");
@@ -185,6 +204,9 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.materialValueLb1.setMessages(UIUtilities.getMessagesHolder(this.materialValueLb1, "CPG_Messages"));
     this.materialValueLb1.setLabelTextId(UIUtilities.getMessageIdHolder(this.materialValueLb1, "MANUAL_PRODUCE_MATERIAL_LABEL"));
     this.materialValueLb1.setEditorSupportClass(ReadOnlyStringPropertyEditor.class.getName());
+    //endregion
+
+    //region 工单计划量 SmartEdit
     this.orderQtyValueLb1 = new SmartEdit();
     this.orderQtyValueLb1.setName("orderQtyValueLb1");
     this.orderQtyValueLb1.setActivityName("orderQtyValueLb");
@@ -205,6 +227,8 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.orderQtyValueLb1.setMessages(UIUtilities.getMessagesHolder(this.orderQtyValueLb1, "CPG_Messages"));
     this.orderQtyValueLb1.setLabelTextId(UIUtilities.getMessageIdHolder(this.orderQtyValueLb1, "MANUAL_PRODUCE_ORDER_QUANTITY_LABEL"));
     this.orderQtyValueLb1.setEditorSupportClass(ReadOnlyStringPropertyEditor.class.getName());
+    //endregion
+    
     paramPanel.add(this.orderValueLb1);
     paramPanel.add(this.materialValueLb1);
     paramPanel.add(this.orderQtyValueLb1);
@@ -214,6 +238,7 @@ public final class DCSValuesCollector23 extends ActivityControl
   {
     if (this.processStep != null)
     {
+      //RecipeResourceSet
       localObject = null;
       try
       {
@@ -223,8 +248,10 @@ public final class DCSValuesCollector23 extends ActivityControl
       {
         localException1.printStackTrace();
       }
+
       if (localObject != null)
       {
+        // AvailableRecipeResources
         Vector localVector = ((RecipeResourceSet)localObject).getAvailableRecipeResources(this.processStep);
         for (int i = 0; i < localVector.size(); i++)
         {
@@ -234,6 +261,7 @@ public final class DCSValuesCollector23 extends ActivityControl
             this.lDAdaptor.setWorkCenterName(((RecipeResource)localVector.get(i)).getWorkCenter().getName());
         }
       }
+
       this.processStep = ((ProcessStep)getInputItem("processStep"));
       this.foundationObject = ((Keyed)getInputItem("foundationObject"));
       this.liveData_url = ((String)getConfigurationItem("LiveDataWebServiceURL"));
@@ -255,9 +283,12 @@ public final class DCSValuesCollector23 extends ActivityControl
       if (this.foundationObject != null)
         this.lDAdaptor.setFoName(this.foundationObject.getName());
     }
+
     setPreferredSize(new Dimension(810, 600));
     setDock(5);
     setLayoutStyle(3);
+
+    //region collectBt FlatButton
     this.collectBt = new FlatButton();
     this.collectBt.setName("collectBt");
     this.collectBt.setActivityName("collectBt");
@@ -291,6 +322,9 @@ public final class DCSValuesCollector23 extends ActivityControl
       }
     };
     this.collectBt.addCComponentEventListener((CComponentEventListener)localObject);
+    //endregion
+
+    // region cancelBt FlatButton
     this.cancelBt = new FlatButton();
     this.cancelBt.setName("cancelBt");
     this.cancelBt.setActivityName("cancelBt");
@@ -324,6 +358,8 @@ public final class DCSValuesCollector23 extends ActivityControl
       }
     };
     this.cancelBt.addCComponentEventListener(local2);
+    //endregion
+
     Panel localPanel1 = new Panel();
     localPanel1.setName("topBtPn");
     localPanel1.setActivityName("topBtPn");
@@ -344,6 +380,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     localPanel1.setBackColor(STANDARD_BACKGROUND);
     localPanel1.add(this.collectBt);
     localPanel1.add(this.cancelBt);
+
     this.pnlToolbar = new Panel();
     this.pnlToolbar.setName("pnlToolbar");
     this.pnlToolbar.setActivityName("pnlToolbar");
@@ -364,6 +401,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.pnlToolbar.setBackColor(STANDARD_BACKGROUND);
     this.pnlToolbar.setForeColor(STANDARD_FOREGROUND);
     this.pnlToolbar.add(localPanel1);
+
     this.orderPn = new Panel();
     this.orderPn.setName("orderPn");
     this.orderPn.setActivityName("orderPn");
@@ -372,6 +410,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.orderPn.setBorderStyle(0);
     this.orderPn.setPreferredSize(new Dimension(750, 50));
     this.orderPn.setLocation(0, 50);
+    //Grid
     this.orderPn.setLayoutStyle(1);
     this.orderPn.setAnchor(0);
     this.orderPn.setGridLayoutColumns(this.orderPnColumns);
@@ -385,6 +424,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.orderPn.setTabStop(false);
     this.orderPn.setGridLayoutColumns(this.orderPnColumns);
     this.orderPn.setGridLayoutRows(this.orderPnRows);
+
     buildBind(this.orderPn);
     this.poiObjectBinder = new ObjectBinder();
     this.poiObjectBinder.setName("poiObjectBinder");
@@ -399,6 +439,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     add(this.poiObjectBinder);
     if (this.processStep == null)
       return;
+
     ProcessStepControlRecipe localProcessStepControlRecipe = this.processStep.getProcessStepControlRecipe();
     this.poi = localProcessStepControlRecipe.getProcessOrderItem();
     if (this.poi.getClass().getName().equalsIgnoreCase(this.poiObjectBinder.getBoundClassType()))
@@ -421,6 +462,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.scrollPane1.setMessages(UIUtilities.getMessagesHolder(this.scrollPane1, ""));
     this.scrollPane1.setName("scrollPane1");
     this.scrollPane1.setActivityName("scrollPane1");
+    
     this.collector = new Panel();
     this.collector.setRoundBorderColor(new Color(0, 0, 0));
     this.collector.setHgap(0);
@@ -447,6 +489,7 @@ public final class DCSValuesCollector23 extends ActivityControl
       return;
     if (this.list == null)
       this.list = new ArrayList();
+
     this.owner = null;
     int j = 0;
     if (getConfigurationItem(this.CONFIGURATION_ITEM_CONFIGURE_OWNER) != null)
@@ -458,6 +501,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     this.list = getConfigComs(this.owner);
     if ((this.list == null) || (this.list.size() == 0))
       return;
+
     int k = 0;
     Dimension localDimension = BasicPanelCom.caculateMaxDimention(null, BasicPanelCom.getLabel("Init", 12));
     int m = 0;
@@ -469,21 +513,27 @@ public final class DCSValuesCollector23 extends ActivityControl
       if (((BasicPanelCom)this.list.get(n)).getIsScaleControl())
         m += 279;
     }
+
     if (localDimension != null)
       if (m > 500)
         this.collector.setPreferredSize(new Dimension(BasicPanelCom.getcrollPanelLength(localDimension) - 20, m));
       else
         this.collector.setPreferredSize(new Dimension(BasicPanelCom.getcrollPanelLength(localDimension), m));
+    
     if ((this.list != null) && (this.list.size() > 0))
     {
       n = 1;
       for (int i1 = 0; i1 < this.list.size(); i1++)
       {
+        //#region
         Color localColor;
         if (n != 0)
           localColor = new Color(255, 255, 255);
         else
           localColor = new Color(221, 221, 227);
+        //#endregion
+
+        //#region 略过DCS为Scale的情况
         if (((BasicPanelCom)this.list.get(i1)).getIsScaleControl())
         {
           if (this.scaleControlHolder == null)
@@ -511,12 +561,14 @@ public final class DCSValuesCollector23 extends ActivityControl
           else
             n = 1;
         }
+        //#endregion
         else
         {
           if (m > 500)
             ((BasicPanelCom)this.list.get(i1)).setPanelWidth(780);
           else
             ((BasicPanelCom)this.list.get(i1)).setPanelWidth(800);
+          
           setPanel(null, (BasicPanelCom)this.list.get(i1), new StringBuilder().append("Item ").append(i1).toString(), localDimension, localColor);
           this.collector.add(((BasicPanelCom)this.list.get(i1)).getPanel());
           if (n != 0)
@@ -623,19 +675,29 @@ public final class DCSValuesCollector23 extends ActivityControl
   {
     if ((this.list == null) || (this.isCancelClick))
     {
+      //#region 释放秤
       if ((this.list != null) && (this.list.size() > 0))
         for (int i = 0; i < this.list.size(); i++)
           if ((((BasicPanelCom)this.list.get(i)).getIsScaleControl()) && (this.scaleControlHolder != null))
             ((CPG_ScalesActivity23)this.scaleControlHolder.get(((BasicPanelCom)this.list.get(i)).getName())).stopPermanentWeighing();
+      //#endregion
+      
+      /**
+       * CContainer.remove
+       * Removes the specified child control from this control
+       */
       remove(this.scrollPane1);
       remove(this.pnlToolbar);
       remove(this.poiObjectBinder);
       return getFunctions().createResponseObject(null);
     }
+
     if ((!this.isCancelClick) && (!this.isCollectClick))
       return getFunctions().createResponseObject(null);
+
     ActivityResult localActivityResult = new ActivityResult();
     UserTransaction localUserTransaction = UserTransactionHelper.getUserTransaction(getServer());
+    // j=0 有错
     int j = 1;
     Response localResponse1 = new Response();
     String str = (String)getConfigurationItem("ApplicationBusinessLogicSubroutine");
@@ -670,6 +732,8 @@ public final class DCSValuesCollector23 extends ActivityControl
             localActivityResult.setSingleError(localObject2.getErrors()[0]);
           }
         }
+
+        //#region 执行subroutine
         if ((j != 0) && (str != null) && (isSubroutineValid(str)))
         {
           localObject2 = getFunctions().subroutine(str, this.processStep, this.foundationObject, this.dcs, this.ins);
@@ -699,6 +763,7 @@ public final class DCSValuesCollector23 extends ActivityControl
             getFunctions().dialogError(new StringBuilder().append(str).append(" returned invalid response.").toString());
           }
         }
+        //#endregion
       }
       if (j != 0)
       {
@@ -742,6 +807,8 @@ public final class DCSValuesCollector23 extends ActivityControl
         setOutputItem("Collected Info", null);
       }
     }
+
+    //#region 采集完成 之后释放秤
     if ((this.list != null) && (this.isCollectClick))
     {
       if (this.list.size() > 0)
@@ -762,6 +829,7 @@ public final class DCSValuesCollector23 extends ActivityControl
       remove(this.pnlToolbar);
       remove(this.poiObjectBinder);
     }
+    //#endregion
     return getFunctions().createResponseObject(null);
   }
 
@@ -786,7 +854,9 @@ public final class DCSValuesCollector23 extends ActivityControl
   public ItemDescriptor[] inputDescriptors()
   {
     if (this.inputDescriptors == null)
-      this.inputDescriptors = new ItemDescriptor[] { ItemDescriptor.createItemDescriptor(DCSValuesCollector23.class, "foundationObject", Keyed.class, new Object[] { "shortDescription", "The Foundation Object (required)" }), ItemDescriptor.createItemDescriptor(CPG_ManualConsumption23.class, "processStep", ProcessStep.class, new Object[] { "shortDescription", "ProcessStep (required)" }) };
+      this.inputDescriptors = new ItemDescriptor[] 
+      { ItemDescriptor.createItemDescriptor(DCSValuesCollector23.class, "foundationObject", Keyed.class, new Object[] { "shortDescription", "The Foundation Object (required)" }), 
+      ItemDescriptor.createItemDescriptor(CPG_ManualConsumption23.class, "processStep", ProcessStep.class, new Object[] { "shortDescription", "ProcessStep (required)" }) };
     return this.inputDescriptors;
   }
 
@@ -814,7 +884,9 @@ public final class DCSValuesCollector23 extends ActivityControl
   public ItemDescriptor[] outputDescriptors()
   {
     if (this.outputDescriptors == null)
-      this.outputDescriptors = new ItemDescriptor[] { ItemDescriptor.createItemDescriptor(getClass(), "Collected Info", HashMap.class, new Object[] { "shortDescription", "The collection of the data" }), ItemDescriptor.createItemDescriptor(getClass(), "Result", Boolean.class, new Object[] { "shortDescription", "Result of the collection" }) };
+      this.outputDescriptors = new ItemDescriptor[] { 
+        ItemDescriptor.createItemDescriptor(getClass(), "Collected Info", HashMap.class, new Object[] { "shortDescription", "The collection of the data" }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "Result", Boolean.class, new Object[] { "shortDescription", "Result of the collection" }) };
     return this.outputDescriptors;
   }
 
@@ -848,10 +920,27 @@ public final class DCSValuesCollector23 extends ActivityControl
   {
     Object[] arrayOfObject = { "None", "None", "", "Foundation Object", "Foundation Object", "", "Station", "Station", "" };
     if (this.configurations == null)
-      this.configurations = new ItemDescriptor[] { ItemDescriptor.createItemDescriptor(getClass(), this.CONFIGURATION_ITEM_CONFIGURE_OWNER, Short.TYPE, new Object[] { "shortDescription", "Configuration Owner", "propertyEditorClass", EnumPropertyEditor.class, "enumerationValues", { "Route Step", Short.valueOf(0), null, "Foundation Object", Short.valueOf(1), null } }), ItemDescriptor.createItemDescriptor(getClass(), "scaleStatePersistance", String.class, new Object[] { "enumerationValues", arrayOfObject, "shortDescription", "Scale State Persistance" }), ItemDescriptor.createItemDescriptor(getClass(), "blockKeyboard", Boolean.class, new Object[] { "shortDescription", "Lock or unlock the scales keyboard." }), ItemDescriptor.createItemDescriptor(getClass(), "allowZero", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Zero command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "allowTare", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Tare command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "allowPresetTare", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Preset Tare command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "allowSetNorminal", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Set Norminal and Tolerances command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "allowAdjust", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Adjust command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "allowCalibrate", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Calibrate command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "allowReset", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Reset command on this scales ." }), ItemDescriptor.createItemDescriptor(getClass(), "LiveDataWebServiceURL", String.class, new Object[] { "shortDescription", "LiveData Webservice url" }), ItemDescriptor.createItemDescriptor(getClass(), "LiveDataWebServiceServerPath", String.class, new Object[] { "shortDescription", "LiveData Webservice server path" }), ItemDescriptor.createItemDescriptor(getClass(), "PLC", String.class, new Object[] { "shortDescription", "LiveData Webservice PLC" }), ItemDescriptor.createItemDescriptor(getClass(), "ApplicationBusinessLogicSubroutine", String.class, new Object[] { "shortDescription", "Application Business Logic Subroutine name(Optional)" }), ItemDescriptor.createItemDescriptor(getClass(), "scalesSubroutine", String.class, new Object[] { "shortDescription", "The name of subroutine that will be called to provide Scales information." }), ItemDescriptor.createItemDescriptor(getClass(), "ApplicationName", String.class, new Object[] { "shortDescription", "Defines the Application Name." }) };
+      this.configurations = new ItemDescriptor[] { 
+        ItemDescriptor.createItemDescriptor(getClass(), this.CONFIGURATION_ITEM_CONFIGURE_OWNER, Short.TYPE, new Object[] { "shortDescription", "Configuration Owner", "propertyEditorClass", EnumPropertyEditor.class, "enumerationValues", { "Route Step", Short.valueOf(0), null, "Foundation Object", Short.valueOf(1), null } }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "scaleStatePersistance", String.class, new Object[] { "enumerationValues", arrayOfObject, "shortDescription", "Scale State Persistance" }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "blockKeyboard", Boolean.class, new Object[] { "shortDescription", "Lock or unlock the scales keyboard." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "allowZero", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Zero command on this scales ." }),
+        ItemDescriptor.createItemDescriptor(getClass(), "allowTare", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Tare command on this scales ." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "allowPresetTare", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Preset Tare command on this scales ." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "allowSetNorminal", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Set Norminal and Tolerances command on this scales ." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "allowAdjust", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Adjust command on this scales ." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "allowCalibrate", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Calibrate command on this scales ." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "allowReset", Boolean.class, new Object[] { "shortDescription", "Allow user Perfoms the Reset command on this scales ." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "LiveDataWebServiceURL", String.class, new Object[] { "shortDescription", "LiveData Webservice url" }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "LiveDataWebServiceServerPath", String.class, new Object[] { "shortDescription", "LiveData Webservice server path" }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "PLC", String.class, new Object[] { "shortDescription", "LiveData Webservice PLC" }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "ApplicationBusinessLogicSubroutine", String.class, new Object[] { "shortDescription", "Application Business Logic Subroutine name(Optional)" }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "scalesSubroutine", String.class, new Object[] { "shortDescription", "The name of subroutine that will be called to provide Scales information." }), 
+        ItemDescriptor.createItemDescriptor(getClass(), "ApplicationName", String.class, new Object[] { "shortDescription", "Defines the Application Name." }) };
     return this.configurations;
   }
 
+  //#region 秤配置项
   private void setIndividualScaleControlConfigItems(CPG_ScalesActivity23 paramCPG_ScalesActivity23)
   {
     setIndividualScaleControlConfigItem("blockKeyboard", paramCPG_ScalesActivity23);
@@ -871,6 +960,7 @@ public final class DCSValuesCollector23 extends ActivityControl
     if (getConfigurationItem(paramString) != null)
       paramCPG_ScalesActivity23.setConfigurationItem(paramString, getConfigurationItem(paramString));
   }
+  //#endregion
 
   private void setPanel(Panel paramPanel, BasicPanelCom paramBasicPanelCom, String paramString, Dimension paramDimension, Color paramColor)
   {
@@ -900,10 +990,14 @@ public final class DCSValuesCollector23 extends ActivityControl
     {
       DataCollectorConfig.DCConfigItem localDCConfigItem = (DataCollectorConfig.DCConfigItem)this.config.getItems().get(i);
       BasicPanelCom localBasicPanelCom = new BasicPanelCom();
+      // IDataTypes 每个数值对应含义  
       localBasicPanelCom.setComType(localDCConfigItem.getDataType());
+
+      // label值设置
       HashMap localHashMap = new HashMap();
       localHashMap.put("COM_LABEL", localDCConfigItem.getName());
       localBasicPanelCom.setName(localDCConfigItem.getName());
+
       if (localDCConfigItem.getQuantitySource().equalsIgnoreCase("PLC"))
       {
         localBasicPanelCom.setIsPLCRead(true);
