@@ -15,7 +15,7 @@
 	- 返回```org.springframework.web.servlet.ModelAndView```实例
 - ViewResolver和View
 	- View
-		![Viewe](./images/1530372959428.png)
+		![View](./images/1530372959428.png)
 	- ```org.springframework.web.servlet.View```接口，统一抽象视图的生成策略
 - 结构图
 	![交互图](./images/1530373087589.png)

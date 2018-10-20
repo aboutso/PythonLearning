@@ -12,7 +12,9 @@
 
     }
 ```
+
 ### 3.FTPC对象与CPG对象之间的连接
+
 - ```com.rockwell.om.app.utility.RecipeResourceSet```
     - Code
     ```java
@@ -91,3 +93,14 @@ function calculatePartRequest(){
     
 }
 ```
+
+8. DsGrid绑定`com.rockwell.om.app.utility.RecipeSequence`时，RecipeSequence的状态显示，标准功能配置如下：
+   ![Grid State](./RecipeSequenceState.png)
+- *Prop Arg* 配置FSM:**CPG_RecipeSequence**
+- *Prop Name*配置为**currentLocalizedStateName**
+- 【问题】**currentLocalizedStateName**无法从下拉框获取，`RecipeSequence`只有状态**currentStateName**，要实现*Prop Name*配置从而状态能够根据Localization变化，需要代码：
+  ```Java
+  colummnDef= gridSequence.getColumnDefinitions()
+  colummnDef[1].setBoundObjectPropName("currentLocalizedStateName")
+  gridSequence.setColumnDefinitions(colummnDef)
+  ```
