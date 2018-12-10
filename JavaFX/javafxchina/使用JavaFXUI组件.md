@@ -36,9 +36,24 @@
 23. 提示信息（Tooltip）
 24. 带有标题的面板和可折叠面板（Titled Pane and Accordion）
 25. 菜单（Menu）
+- MenuBar
+- MenuItem
+    - Menu
+    - CheckMenuItem
+    - RadioMenuItem
+    - Menu
+    - CustomMenuItem
+        - SeparatorMenuItem
+    - ContextMenu
 26. 颜色选择器（Color Picker）
 27. 日期选择器（Date Picker）
 28. 分页控件（Pagination Control）
+- 在程序中考虑使用如下的样式来改变Pagination控件的外观：
+    - -fx-max-page-indicator-count ——设置Page Indicator的最大数值。
+    - -fx-arrows-visible ——控制后一页和前一页箭头按钮的可见性，默认为true。
+    - -fx-tooltip-visible ——控制Page Indicator提示信息框的可见性，默认为true。
+    - -fx-page-information-visible ——控制页面信息的可见性，默认为true。
+    - -fx-page-information-alignment ——设置页面信息的对齐方式
 29. 文件选择框（File Chooser）
 30. 自定义UI控件（Customization of UI Controls）
 31. 嵌入式平台的UI控件（UI Controls on the Embedded Platforms）
