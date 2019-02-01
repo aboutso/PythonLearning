@@ -1,0 +1,14 @@
+1. **Package** `javafx.collections`
+- interface
+    - **ObservableList**：一种可以使用监听器(Listener)在发生改变时进行追踪的列表
+    - **ListChangeListener**：一种可以接收ObservableList的改变通知的接口
+        - ListChangeListener.Change：代表ObservableList中的改变
+        - ListChangeListener.Change对象可以包含多个改变，因此必须在while循环中调用next()方法对其进行迭代遍历
+    - [XYH] **ObservableList**、**ListChangeListener**结合使用
+    - **ObservableMap**：一种可以使用观察者(Observer)在发生改变时进行追踪改变的映射
+    - **MapChangeListener**：一种可以接收ObservableMap的改变通知的接口
+        - MapChangeListener.Change：代表ObservableMap中的改变
+        - MapChangeListener.Change对象中仅包括一个改变，对应表示put或remove操作的发生
+    - [XYH] **ObservableMap**、**MapChangeListener**结合使用
+- class
+    - **FXCollections**：一个工具类，其中包含了一些静态方法，它们与java.util.Collections中的方法一一对应
